@@ -1,0 +1,30 @@
+
+name: Test service containers
+
+on: [push]
+
+jobs:
+  test-service-containers:
+    name: Test service containers
+    runs-on: ubuntu-22.04
+    env:
+      POSTGRES_URL: postgres://postgres:12345678@postgres:5432/foo
+    steps:
+      - name: Troubleshooting information
+        run: |
+          sudo apt-get install dnsutils
+          dig postgres
+
+    services:
+      postgres:
+        image: postgres:15
+        ports:
+          - 5432:5432
+        env:
+          POSTGRES_PASSWORD: 12345678
+          POSTGRES_DB: foo
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 1s
+          --health-timeout 5s
+          --health-retries 30
